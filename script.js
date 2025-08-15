@@ -316,6 +316,10 @@ const submitBtn = document.getElementById("submit-btn");
 const nextBtn = document.getElementById("next-btn");
 const scorebar = document.getElementById("scorebar");
 
+// Progress Bar Elements
+const progressBar = document.getElementById("progress-bar");
+const progressLabel = document.getElementById("progress-label");
+
 let currentIndex = 0;
 let score = 0;
 let quizSet = [];
@@ -345,6 +349,11 @@ function levenshtein(a, b) {
   return dp[b.length][a.length];
 }
 
+// Normalize text: lowercase + remove all spaces, commas and danda symbol (।)
+function normalizeText(str) {
+  return str.trim().toLowerCase().replace(/[\s,।]+/g, "");
+}
+
 function isCloseMatch(user, correct) {
   const dist = levenshtein(user, correct);
   const longest = Math.max(user.length, correct.length);
@@ -352,7 +361,20 @@ function isCloseMatch(user, correct) {
   return similarity >= 0.85; // tolerance level
 }
 
-// === QUIZ FLOW ===
+// Add: Fun Fact logic (optional, for engagement!)
+function getFunFact(idx) {
+  const facts = [
+    "Newton also invented calculus!",
+    "Gravitational acceleration is 9.8 m/s² on Earth.",
+    "The speed of light is exactly 299,792,458 m/s.",
+    "Energy and mass are related by E = mc².",
+    "Vectors have direction as well as magnitude.",
+    "SI units standardize physics across the world.",
+    "A force of 1 Newton will accelerate 1 kg at 1 m/s²."
+  ];
+  return facts[idx % facts.length];
+}
+
 function setLanguage(lang) {
   selectedLanguage = lang;
   document.getElementById("language-modal").style.display = "none";
@@ -365,20 +387,24 @@ function startQuiz() {
   quizSet = shuffle(questions);
   answerInput.style.display = "";
   submitBtn.style.display = "";
-  
-  // ✅ Set button text in chosen language
+
+  // Set button text in chosen language
   submitBtn.innerText = selectedLanguage === 'en' ? "Submit" : "जमा करें";
-  
   nextBtn.innerText = selectedLanguage === 'en' ? "Next" : "अगला";
+
   loadQuestion();
+  updateProgressBar(); // Ensure bar resets on restart
 }
 
 function loadQuestion() {
   resetUI();
   const q = quizSet[currentIndex];
-  // use selected language
   questionEl.textContent = `${currentIndex + 1}. ${q.question[selectedLanguage]}`;
   updateScorebar();
+  updateProgressBar();
+  // Show fun fact, if element exists
+  const funFactEl = document.getElementById("fun-fact");
+  if (funFactEl) funFactEl.textContent = getFunFact(currentIndex);
 }
 
 function resetUI() {
@@ -398,29 +424,55 @@ function updateScorebar(message = "") {
   }
 }
 
+// Progress bar visual update
+function updateProgressBar() {
+  if (!progressBar || !progressLabel || !quizSet.length) return;
+  progressBar.style.width = ((currentIndex + 1) / quizSet.length * 100) + "%";
+  progressLabel.textContent = `Q${currentIndex + 1} / ${quizSet.length}`;
+}
+
+// Multiple correct answers + spaces, commas, danda ignored
 function checkAnswer() {
-  const correctRaw = quizSet[currentIndex].answer[selectedLanguage].trim().toLowerCase();
-  const userRaw = answerInput.value.trim().toLowerCase();
+  let correctAnswers = quizSet[currentIndex].answer[selectedLanguage];
+
+  // Convert to array: if it's string with commas, split
+  if (typeof correctAnswers === "string") {
+    correctAnswers = correctAnswers.split(",").map(a => a.trim());
+  }
+
+  const userRaw = normalizeText(answerInput.value);
 
   answerInput.disabled = true;
   submitBtn.disabled = true;
 
-  if (userRaw === correctRaw || isCloseMatch(userRaw, correctRaw)) {
+  // Check if matches any correct answer (ignoring spaces, commas, danda)
+  const isCorrect = correctAnswers.some(ans =>
+    userRaw === normalizeText(ans) ||
+    isCloseMatch(userRaw, normalizeText(ans))
+  );
+
+  if (isCorrect) {
     score++;
     sounds.correct.play();
     answerInput.classList.add("correct");
-    answerInput.value = quizSet[currentIndex].answer[selectedLanguage]; // show corrected answer
+    answerInput.value = Array.isArray(quizSet[currentIndex].answer[selectedLanguage])
+      ? quizSet[currentIndex].answer[selectedLanguage].join(", ")
+      : quizSet[currentIndex].answer[selectedLanguage];
     updateScorebar(`<span class="correct-text">${selectedLanguage === 'en' ? 'Correct!' : 'सही!'}</span>`);
   } else {
     sounds.wrong.play();
     answerInput.classList.add("incorrect");
+    const correctJoined = Array.isArray(quizSet[currentIndex].answer[selectedLanguage])
+      ? quizSet[currentIndex].answer[selectedLanguage].join(", ")
+      : quizSet[currentIndex].answer[selectedLanguage];
     updateScorebar(
       `<span class="incorrect-text">${selectedLanguage === 'en' ? 'Incorrect.' : 'गलत।'}</span> 
       ${selectedLanguage === 'en' ? 'Correct Answer:' : 'सही उत्तर:'} 
-      <b>${quizSet[currentIndex].answer[selectedLanguage]}</b>`
+      <b>${correctJoined}</b>`
     );
-    answerInput.value += ` → ${quizSet[currentIndex].answer[selectedLanguage]}`;
+    answerInput.value += ` → ${correctJoined}`;
   }
+
   nextBtn.style.display = "block";
 }
 
@@ -433,6 +485,7 @@ function showScore() {
   submitBtn.style.display = "none";
   nextBtn.innerText = selectedLanguage === 'en' ? "Play Again" : "फिर से खेलें";
   scorebar.textContent = "";
+  updateProgressBar(); // Reset/re-show bar at end if needed
 }
 
 // EVENTS
@@ -444,10 +497,27 @@ nextBtn.addEventListener("click", () => {
     startQuiz();
   } else {
     currentIndex++;
-    currentIndex < quizSet.length ? loadQuestion() : showScore();
+    if (currentIndex < quizSet.length) {
+      loadQuestion();
+    } else {
+      showScore();
+    }
   }
 });
 
 answerInput.addEventListener("keypress", e => {
   if (e.key === "Enter" && !submitBtn.disabled) checkAnswer();
 });
+
+// Optional: Remove answer highlight on focus for a fresh question
+answerInput.addEventListener("focus", () => {
+  answerInput.classList.remove("correct", "incorrect");
+});
+
+// Optional: Hide "fun-fact" at the end screen for visual niceness
+function hideFunFactAtEnd() {
+  const funFactEl = document.getElementById("fun-fact");
+  if (funFactEl && currentIndex >= quizSet.length) {
+    funFactEl.textContent = "";
+  }
+}

@@ -1,36 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trigonometry Quiz</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Physics Class-11th Quiz</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- Add this modal HTML just before closing body tag in index.html -->
-<div id="language-modal" style="
-  position:fixed;top:0;left:0;width:100%;height:100%;
-  background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;
-  z-index:999;">
-  <div style="background:#fff;padding:20px;border-radius:10px;text-align:center;">
-    <h3>Select Your Language / अपनी भाषा चुनें</h3>
-    <button onclick="setLanguage('en')" style="padding:10px 20px;margin:10px;">English</button>
-    <button onclick="setLanguage('hi')" style="padding:10px 20px;margin:10px;">हिन्दी</button>
-  </div>
-</div>
-
-    <div class="app">
-        <h1>Physics Class-11th Quiz</h1>
-        <div class="quiz">
-            <h2 id="question">Question text</h2>
-            <input id="user-answer" type="text" autocomplete="off" placeholder="Type your answer...">
-            <button id="submit-btn">Submit</button>
-        </div>
-        <button id="next-btn" class="hidden">Next</button>
-        <div class="scorebar" id="scorebar"></div>
-        <div class="author-name">Prince</div>
+  <!-- Language-selection modal -->
+  <div id="language-modal" class="modal">
+    <div class="modal-box">
+      <h3>Select Your Language / अपनी भाषा चुनें</h3>
+      <button onclick="setLanguage('en')">English</button>
+      <button onclick="setLanguage('hi')">हिन्दी</button>
     </div>
-    <script src="script.js"></script>
+  </div>
+
+  <!-- Header / branding -->
+  <header class="quiz-header">
+    <span class="logo">🔬</span>
+    <h1>Physics Class-11th Quiz</h1>
+  </header>
+
+  <!-- Main quiz card -->
+  <main class="app">
+
+    <!-- progress -->
+    <div class="progress-container">
+      <div class="progress-bar" id="progress-bar"></div>
+      <span id="progress-label">Q1 / 30</span>
+    </div>
+
+    <div class="quiz">
+      <h2 id="question">Question text</h2>
+      <input id="user-answer" type="text" autocomplete="off" placeholder="Type your answer here…">
+
+      <!-- action buttons -->
+      <div class="btn-row">
+        <button id="submit-btn">Submit</button>
+        <button id="next-btn" class="hidden">Next</button>
+      </div>
+    </div>
+
+    <div class="scorebar" id="scorebar"></div>
+    <div class="fun-fact" id="fun-fact"></div>
+    <div class="author-name">Prince</div>
+  </main>
+
+  <footer class="footer">
+    Made for Class 11th Physics 🚀
+  </footer>
+
+  <script src="script.js"></script>
 </body>
 </html>

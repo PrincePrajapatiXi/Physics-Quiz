@@ -1,128 +1,158 @@
+/* ------  Core layout  ------ */
 body {
-    background: linear-gradient(120deg, #001e4d 0%, #2186eb 100%);
-    min-height: 100vh;
-    font-family: 'Poppins', sans-serif;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  background: linear-gradient(120deg,#001e4d 0%,#2186eb 100%);
+  min-height: 100vh;
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
+/* ------  Language modal  ------ */
+.modal {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.6);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 999;
+}
+.modal-box {
+  background: #fff; padding: 24px 28px;
+  border-radius: 12px; text-align: center;
+}
+.modal-box button {
+  padding: 10px 22px; margin: 10px;
+  font-weight: 600; border: none; border-radius: 6px;
+  background: #2186eb; color: #fff; cursor: pointer;
+}
+
+/* ------  Header  ------ */
+.quiz-header {
+  text-align: center; margin-top: 28px;
+  color: #fff;
+}
+.quiz-header .logo {
+  font-size: 2.4rem; display: block;
+  margin-bottom: 6px;
+}
+
+/* ------  Quiz card  ------ */
 .app {
-    background: rgba(255,255,255,0.93);
-    width: 98%;
-    max-width: 440px;
-    margin: 40px auto;
-    border-radius: 18px;
-    box-shadow: 0 4px 40px 1px rgba(31,50,100,0.15), 0 1px 2px rgba(0,0,0,0.2);
-    padding: 36px 24px 24px 24px;
-    position: relative;
-    transition: box-shadow .2s;
+  background: rgba(255,255,255,0.93);
+  width: 94%; max-width: 500px;
+  margin: 26px auto;
+  border-radius: 18px;
+  box-shadow: 0 8px 50px rgba(31,50,100,0.18),0 1px 4px rgba(0,0,0,0.2);
+  padding: 34px 26px 28px;
+  position: relative;
 }
 
-.app h1 {
-    font-size: 2.1rem;
-    color: #138fff;
-    font-weight: 700;
-    letter-spacing: 2px;
-    margin-bottom: 28px;
-    text-align: center;
+/* progress bar */
+.progress-container {
+  background: #f6f9ff;
+  border-radius: 8px;
+  padding: 9px 12px;
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 22px;
+  box-shadow: 0 0 6px #e4eaff;
+}
+.progress-bar {
+  height: 10px; width: 0;
+  border-radius: 5px;
+  background: linear-gradient(to right,#2186eb,#5fe8b0);
+  transition: width .25s;
+}
+#progress-label {
+  margin-left: 12px;
+  font-weight: 600; color: #2186eb;
+  font-size: .97rem;
 }
 
+/* question */
 .quiz h2 {
-    font-size: 1.2rem;
-    color: #101a49;
-    font-weight: 600;
-    margin-bottom: 24px;
-    min-height: 30px;
+  font-size: 1.25rem;
+  color: #101a49;
+  font-weight: 700;
+  margin-bottom: 22px;
+  min-height: 38px;
+  border-left: 4px solid #138fff;
+  padding-left: 12px;
 }
 
+/* answer input */
 #user-answer {
-    width: 100%;
-    padding: 13px 12px;
-    font-size: 1.04rem;
-    border: 2px solid #b1bccf;
-    border-radius: 7px;
-    margin-bottom: 16px;
-    transition: border-color 0.2s, background 0.2s;
-    background: #f6f9ff;
-    box-sizing: border-box;
+  width: 100%;
+  padding: 14px 12px;
+  font-size: 1.07rem;
+  border: 2px solid #b1bccf;
+  border-radius: 8px;
+  margin-bottom: 18px;
+  transition: border-color .2s, background .2s;
+  background: #f6f9ff; box-sizing: border-box;
 }
 #user-answer:focus {
-    border-color: #2186eb;
-    background: #e9f7ff;
-    outline: none;
+  border-color: #2186eb; background: #e9f7ff; outline: none;
 }
 input.correct {
-    background: #ddf7e7;
-    border-color: #3ed48c;
-    animation: correctHighlight 0.7s;
+  background: #deffe3; border-color: #3ed48c;
 }
 input.incorrect {
-    background: #ffedef;
-    border-color: #fc6287;
-    animation: incorrectHighlight 0.7s;
-}
-@keyframes correctHighlight {
-    from { box-shadow: 0 0 0 0 #3ed48c70;}
-    to   { box-shadow: 0 0 0 10px #3ed48c00;}
-}
-@keyframes incorrectHighlight {
-    from { box-shadow: 0 0 0 0 #fc628770;}
-    to   { box-shadow: 0 0 0 10px #fc628700;}
+  background: #ffeaea; border-color: #fc6287;
 }
 
-#submit-btn, #next-btn {
-    background: linear-gradient(90deg, #2186eb 42%, #5fe8b0 100%);
-    color: #fff;
-    padding: 11px 12px;
-    width: 100%;
-    font-size: 1rem;
-    font-weight: 600;
-    border: none;
-    border-radius: 7px;
-    cursor: pointer;
-    transition: filter 0.15s, background 0.08s;
+/* buttons side-by-side */
+.btn-row { display: flex; gap: 12px; }
+#submit-btn,#next-btn {
+  flex: 1 1 0;
+  background: linear-gradient(90deg,#2186eb 42%,#5fe8b0 100%);
+  color: #fff; padding: 13px 0;
+  font-size: 1rem; font-weight: 600;
+  border: none; border-radius: 8px;
+  cursor: pointer; transition: filter .15s, background .08s;
 }
-#submit-btn:hover, #next-btn:hover {
-    filter: brightness(.93);
-}
+#submit-btn:hover,#next-btn:hover { filter: brightness(.93); }
 #submit-btn:disabled {
-    background: #e6e6e6;
-    color: #aaa;
-    cursor: default;
+  background: #eee; color: #aaa; cursor: default;
 }
-#next-btn {
-    margin-top: 18px;
-    display: none;
-}
+#next-btn { display: none; }
 
+/* feedback / score */
 .scorebar {
-    margin-top: 20px;
-    text-align: center;
-    color: #1c6eef;
-    font-weight: 600;
-    font-size: .97rem;
+  margin-top: 20px; text-align: center;
+  color: #1c6eef; font-weight: 600; font-size: 1.03rem;
+}
+.correct-text { color:#3ed48c; font-weight:700; }
+.incorrect-text{ color:#fc6287; font-weight:700; }
+
+/* fun fact */
+.fun-fact {
+  margin-top: 20px;
+  background: #e9f7ff;
+  border-left: 4px solid #2186eb;
+  border-radius: 8px;
+  padding: 12px 18px;
+  color: #444;
+  font-size: .96rem;
+  min-height: 24px;
 }
 
-.correct-text {
-    color: #3ed48c; font-weight: 700;
-}
-.incorrect-text {
-    color: #fc6287; font-weight: 700;
-}
-
+/* author tag */
 .author-name {
-    position: absolute;
-    bottom: 12px; right: 18px;
-    color: #ff0000;
-    font-size: .87rem;
-    opacity: .66;
-    font-family: inherit;
-    pointer-events: none;
+  position: absolute; bottom: 12px; right: 18px;
+  color: #ff0000; font-size: .87rem; opacity: .66;
 }
 
-@media (max-width: 520px) {
-    .app { padding: 18px 4vw 18px 4vw; }
-    .app h1 { font-size: 1.35rem; }
-    .quiz h2 { font-size: 1rem; }
+/* footer */
+.footer {
+  margin: 26px auto 18px;
+  text-align: center; color:#fff; font-weight:600;
+  opacity: .9;
+}
+
+/* mobile tweaks */
+@media (max-width:560px){
+  .app{padding:18px 4vw 24px;}
+  .quiz h2{font-size:1.08rem;}
+  #user-answer{font-size:1rem;}
+  #submit-btn,#next-btn{font-size:.96rem; padding:12px 0;}
 }
